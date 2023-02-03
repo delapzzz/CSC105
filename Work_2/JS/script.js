@@ -8,4 +8,3 @@ var me = {
 for(var x in me){
     console.log(me[x]);
 }
-console.log(me);
