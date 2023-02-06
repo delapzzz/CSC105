@@ -1,0 +1,31 @@
+.Card{
+    position: absolute;
+    padding: 20px;
+    margin: 20px;
+    border: 2px solid black;
+    background-image: linear-gradient(90deg,yellow,red);
+    top: 30%;
+    left: 30%;
+    
+    width: 470px;
+    box-shadow: 2px 2px 2px 1px black;
+    border-radius: 10px;
+
+}
+.info{
+    float: right;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+.Pic{
+    position: relative;
+    top: 20px;
+}
+#FB{
+   width: 200px;
+   border: 2px solid black; 
+   
+}
+body{
+    background-image: linear-gradient(90deg,red, yellow);
+}
+
