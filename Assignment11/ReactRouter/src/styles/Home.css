@@ -1,0 +1,11 @@
+.login {
+    background: blue;
+    color: white;
+    border-radius: 10px;
+    height: 40px;
+    width: 55px;
+    font-weight: bold;
+    border: none;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
