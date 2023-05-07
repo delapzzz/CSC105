@@ -3,6 +3,7 @@ const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
 const app = express();
 const port = 3000;
+const bodyParser = require("body-parser");
 
 // Configure the MySQL connection
 const connection = mysql.createConnection({
@@ -25,11 +26,23 @@ connection.connect((err) => {
   }
 });
 
+
+// Connect to database
+connection.connect();
+
+console.log("Database is connected");
+
+// parse various different custom JSON types as JSON
+app.use(bodyParser.json({ type: "application/json" }));
+
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server start on port ${port}`);
 });
-
 // Define the login endpoint
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
