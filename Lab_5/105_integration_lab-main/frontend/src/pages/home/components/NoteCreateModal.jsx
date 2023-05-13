@@ -15,37 +15,41 @@ const NoteCreateModal = ({ open = false, handleClose = () => {}, setNotes = () =
 
   const validateForm = () => {
     const error = {};
-    if (!newNote.title) error.title = 'Title is required';
-    if (!newNote.description) error.description = 'Description is required'; setError(error);
-    if (Object.keys(error).length) return false;
-      return true;
-    }
+    if(!newNote.title) error.title = 'Title is required';
+    if(!newNote.description) error.description = 'Description is required';
+    setError(error);
 
-    const submit = async () => {
-      // TODO: Implement create note 
-      // 1. validate form
-      if (!validateForm()) return;
-      try {
-      // 2. call API to create note
+    if(Object.keys(error).length) return false;
+    return true;
+  }
+
+  const submit = async () => {
+    // TODO: Implement create note
+    // 1. validate form
+    if(!validateForm()) return;
+    // 2. call API to create note
+    try{
       const userToken = Cookies.get('UserToken');
-      const response = await Axios.post('/note', newNote, {
-      headers: { Authorization: `Bearer ${userToken}` }, 
+      const response = await Axios.post('/note', newNote,{
+        headers: { Authorization: `Bearer ${userToken}` },
       });
-      
       // 3. if successful, add new note to state and close modal
-      if (response.data.success) {
-        setStatus({ severity: 'success', msg: 'Create note successfully' }); 
+      if(response.data.success){
+        setStatus({severity: 'success', msg: 'Create note successfully'});
         setNotes((prev) => [...prev, response.data.data]);
         resetAndClose();
-        }
-      } catch (error) {
-      // 4. if create note failed, check if error is from calling API or not 
-      if (error instanceof AxiosError && error.response) {
-          setStatus({ severity: 'error', msg: error.response.data.error }); 
-      } else {
-          setStatus({ severity: 'error', msg: error.message }); 
       }
-      } };
+    }catch(error){
+      // console.log(error);
+      // 4. if create note failed, check if error is from calling API or not
+      if(error instanceof AxiosError && error.response){
+        setStatus({severity: 'error', msg: error.response.data.message});
+      }else{
+        setStatus({severity: 'error', msg: error.message});
+      }
+      // 5. if error is from calling API, set error to state
+    }
+  };
 
   const resetAndClose = () => {
     setTimeout(() => {
