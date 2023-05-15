@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Stack, Container, Typography, Grid } from '@mui/material';
 import CustomButton from '../../share/components/CustomButton';
 import NoteCard from './components/NoteCard';
@@ -6,11 +6,13 @@ import NoteCreateModal from './components/NoteCreateModal';
 import Axios from '../../share/AxiosInstance';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import GlobalContext from '../../share/context/GlobalContext';
 
-const Home = ({ user = {}, setStatus = () => {} }) => {
+const Home = ({  }) => {
   const [openCreate, setOpenCreate] = useState(false);
   const [notes, setNotes] = useState([]);
   const navigate = useNavigate();
+  const {user,setStatus} = useContext(GlobalContext);
 
   useEffect(() => {
     const userToken = Cookies.get('UserToken');
