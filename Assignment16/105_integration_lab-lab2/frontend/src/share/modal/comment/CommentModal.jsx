@@ -3,75 +3,93 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useKeyDown } from '../../../hooks/useKeyDown';
 import CommentCard from './components/CommentCard';
 import Axios from '../../AxiosInstance';
-import GlobalContext from '../../context/GlobalContext';
+import GlobalContext  from '../../context/GlobalContext';
 import Cookies from 'js-cookie';
 import { AxiosError } from 'axios';
+import CommentContext  from '../../context/CommentContext';
 
-const CommentModal = ({ open = false, handleClose = () => { } }) => {
+const CommentModal = ({ open = false, handleClose = () => {} }) => {
   const { user, setStatus } = useContext(GlobalContext);
   const [textField, setTextField] = useState('');
-  const [textFieldError, settextFieldError] = useState('');
-  const [comments, setComments] = useState([]);
+  const [textFieldError, setTextFieldError] = useState('');
+  const { comments, setComments } = useContext(CommentContext);
 
   useKeyDown(() => {
     handleAddComment();
   }, ['Enter']);
 
   useEffect(() => {
-    // TODO: Implement get notes by user's token
-    // 1. check if user is logged in
     const userToken = Cookies.get('UserToken');
     if (userToken !== undefined && userToken !== 'undefined') {
-      // 2. call API to get notes
-      Axios.get('/comment', { headers: { Authorization: `Bearer ${userToken}` } }).then((res) => {
-        // 3. set notes to state
-        setComments(res.data.data.map((el) => { return { id: el.id, msg: el.text } }));
-      });
+      Axios.get('/comment', {
+        headers: { Authorization: `Bearer ${userToken}` },
+      })
+        .then((response) => {
+          const commentsData = response.data.data.map((el) => ({
+            id: el.id,
+            msg: el.text,
+          }));
+          setComments(commentsData);
+        })
+        .catch((error) => {
+          console.error('Error fetching comments:', error);
+        });
     }
-  }, [user]);
+  }, [user, setComments]);
 
   const handleAddComment = async () => {
-    // TODO implement logic
     if (!validateForm()) return;
+
     try {
       const userToken = Cookies.get('UserToken');
-      const response = await Axios.post('/comment',
-        { text: textField }, {
-        headers: { Authorization: `Bearer ${userToken}` },
-      });
+      const response = await Axios.post(
+        '/comment',
+        { text: textField },
+        { headers: { Authorization: `Bearer ${userToken}` } }
+      );
+
       if (response.data.success) {
-        setStatus({ severity: 'success', msg: 'Create comment successfully' });
-        setComments((comments) => [...comments, { id: response.data.data.id, msg: textField }]);
+        setStatus({
+          severity: 'success',
+          msg: 'Create comment successfully',
+        });
+
+        const newComment = {
+          id: response.data.data.id,
+          msg: textField,
+        };
+
+        setComments((prevComments) => [...prevComments, newComment]);
         setTextField('');
       }
-    } catch (e) {
+    } catch (error) {
       setTextField('');
-      // check if e are AxiosError
-      if (e instanceof AxiosError)
-        if (e.response)
-          // check if e.response exist
-          return setStatus({
-            msg: e.response.data.error,
+
+      if (error instanceof AxiosError) {
+        if (error.response) {
+          setStatus({
+            msg: error.response.data.error,
             severity: 'error',
           });
-      // if e is not AxiosError or response doesn't exist, return error message
-      return setStatus({
-        msg: e.message,
-        severity: 'error',
-      });
+        }
+      } else {
+        setStatus({
+          msg: error.message,
+          severity: 'error',
+        });
+      }
     }
-    // setComments([...comments, { id: Math.random(), msg: textField }]);
   };
 
   const validateForm = () => {
-    let isValid = true;
-    //check user
     if (!textField) {
-      settextFieldError('Comment is required');
-      isValid = false;
+      setTextFieldError('Comment is required');
+      return false;
     }
-    return isValid;
-  }
+
+    setTextFieldError('');
+    return true;
+  };
 
   return (
     <Modal open={open} onClose={handleClose}>
@@ -98,10 +116,12 @@ const CommentModal = ({ open = false, handleClose = () => { } }) => {
             value={textField}
             onChange={(e) => setTextField(e.target.value)}
             fullWidth
-            error={textFieldError !== ''}
+            error={!!textFieldError}
             helperText={textFieldError}
             placeholder="Type your comment"
             variant="standard"
+         
+
           />
           <Button onClick={handleAddComment}>Submit</Button>
         </Box>
