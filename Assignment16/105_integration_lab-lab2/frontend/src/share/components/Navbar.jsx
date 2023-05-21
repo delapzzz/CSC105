@@ -4,7 +4,7 @@ import CustomButton from './CustomButton';
 import Axios from '../AxiosInstance';
 import Cookies from 'js-cookie';
 import { useContext } from 'react';
-import GlobalContext from '../context/GlobalContext';
+import GlobalContext from '../Context/GlobalContext';
 import { useQuery } from 'react-query';
 
 const Navbar = ({ handleOpen = () => {} }) => {

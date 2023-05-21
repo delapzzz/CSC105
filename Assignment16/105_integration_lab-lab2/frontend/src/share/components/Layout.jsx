@@ -5,7 +5,7 @@ import Narbar from './Navbar';
 import AuthModal from '../modal/auth/AuthModal';
 import CommentModal from '../modal/comment/CommentModal';
 import SnackBarMessage from '../SnackBarMessage';
-import GlobalContext from '../context/GlobalContext';
+import GlobalContext from '../Context/GlobalContext';
 import {QueryClientProvider} from 'react-query'
 import { QueryClient } from 'react-query';
 

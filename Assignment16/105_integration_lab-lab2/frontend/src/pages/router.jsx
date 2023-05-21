@@ -10,10 +10,7 @@ const router = createBrowserRouter([
       { path: '/', element: <Home /> },
       { path: '/note/:noteId', element: <Note /> },
     ],
-
-    
   },
-  
 ]);
 
 export default router;
